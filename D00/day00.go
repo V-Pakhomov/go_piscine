@@ -11,11 +11,12 @@ import (
 func main() {
 	var sum int = 0
 	var mean float32
+	var mode int
 
 	arr := make(map[int]int)
 	slice := make([]int, 0)
 	scanner := bufio.NewScanner(os.Stdin)
-	for scanner.Scan(){
+	for scanner.Scan() {
 		num, err := strconv.Atoi(scanner.Text())
 		if err != nil {
 			if len(scanner.Text()) != 0 {
@@ -36,6 +37,13 @@ func main() {
 	} else {
 		mean = float32(slice[len(slice)/2 - 1] + slice[len(slice)/2]) / 2
 	}
-	fmt.Println("mean =", mean)
+	max_count := 0
+	for _, n := range slice {
+		if arr[n] > max_count {
+			mode = n
+			max_count = arr[n]
+		}
+	}
+	fmt.Println("mean =", mean, "mode =", mode)
 	fmt.Println(slice)
 }
