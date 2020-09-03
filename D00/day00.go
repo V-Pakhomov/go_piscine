@@ -6,12 +6,15 @@ import (
 	"bufio"
 	"strconv"
 	"sort"
+	"math"
 )
 
 func main() {
 	var sum int = 0
+	var median float32
 	var mean float32
 	var mode int
+	var sd float64 = 0
 
 	arr := make(map[int]int)
 	slice := make([]int, 0)
@@ -29,21 +32,21 @@ func main() {
 			sum += num
 		}
 	}
-	fmt.Println("sum =", sum)
-	fmt.Println(arr)
 	sort.Ints(slice)
 	if len(slice) % 2 == 1 {
-		mean = float32(slice[len(slice)/2])
+		median = float32(slice[len(slice)/2])
 	} else {
-		mean = float32(slice[len(slice)/2 - 1] + slice[len(slice)/2]) / 2
+		median = float32(slice[len(slice)/2 - 1] + slice[len(slice)/2]) / 2
 	}
+	mean = float32(sum) / float32(len(arr))
 	max_count := 0
 	for _, n := range slice {
+		sd += math.Pow(float64(float32(n) - mean), 2)
 		if arr[n] > max_count {
 			mode = n
 			max_count = arr[n]
 		}
 	}
-	fmt.Println("mean =", mean, "mode =", mode)
-	fmt.Println(slice)
+	sd = math.Sqrt(sd)
+	fmt.Printf("mean = %.2f\nmedian = %.2f\nmode = %d\nSD = %.2f\n", mean, median, mode, sd)
 }
