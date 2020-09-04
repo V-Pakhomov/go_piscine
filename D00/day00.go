@@ -79,6 +79,26 @@ func calcSD(arr []int) float64 {
 	return sd
 }
 
+func printOutput(arr []int, mean bool, median bool, mode bool, sd bool) {
+	if !mean && !median && !mode && !sd {
+		fmt.Printf("Mean: %.2f\nMedian: %.2f\nMode: %d\nSD: %.2f\n",
+					calcMean(arr), calcMedian(arr), calcMode(arr), calcSD(arr))
+	} else {
+		if mean {
+			fmt.Printf("Mean: %.2f\n", calcMean(arr))
+		}
+		if median {
+			fmt.Printf("Median: %.2f\n", calcMedian(arr))
+		}
+		if mode {
+			fmt.Printf("Mode: %d\n", calcMode(arr))
+		}
+		if sd {
+			fmt.Printf("SD: %.2f\n", calcSD(arr))
+		}
+	}
+}
+
 func main() {
 	meanFlag := flag.Bool("Mean", false, "mean flag")
 	medianFlag := flag.Bool("Median", false, "median flag")
@@ -90,21 +110,5 @@ func main() {
 		fmt.Println("There aren't numbers in stdin")
 		os.Exit(2)
 	}
-	if !*meanFlag && !*medianFlag && !*modeFlag && !*sdFlag {
-		fmt.Printf("Mean: %.2f\nMedian: %.2f\nMode: %d\nSD: %.2f\n",
-					calcMean(arr), calcMedian(arr), calcMode(arr), calcSD(arr))
-	} else {
-		if *meanFlag {
-			fmt.Printf("Mean: %.2f\n", calcMean(arr))
-		}
-		if *medianFlag {
-			fmt.Printf("Median: %.2f\n", calcMedian(arr))
-		}
-		if *modeFlag {
-			fmt.Printf("Mode: %d\n", calcMode(arr))
-		}
-		if *sdFlag {
-			fmt.Printf("SD: %.2f\n", calcSD(arr))
-		}
-	}
+	printOutput(arr, *meanFlag, *medianFlag, *modeFlag, *sdFlag)
 }
