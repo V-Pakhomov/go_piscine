@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"sort"
 	"math"
+	"flag"
 )
 
 func arrToMap(arr []int) map[int]int {
@@ -79,10 +80,34 @@ func calcSD(arr []int) float64 {
 }
 
 func main() {
+	meanFlag := flag.Bool("Mean", false, "mean flag")
+	medianFlag := flag.Bool("Median", false, "median flag")
+	modeFlag := flag.Bool("Mode", false, "mode flag")
+	sdFlag := flag.Bool("SD", false, "SD flag")
+	flag.Parse()
 	arr := readStdin()
+	if len(arr) == 0 {
+		fmt.Println("There aren't numbers in stdin")
+		os.Exit(2)
+	}
 	mean := calcMean(arr)
 	median := calcMedian(arr)
 	mode := calcMode(arr)
 	sd := calcSD(arr)
-	fmt.Printf("mean = %.2f\nmedian = %.2f\nmode = %d\nSD = %.2f\n", mean, median, mode, sd)
+	if !*meanFlag && !*medianFlag && !*modeFlag && !*sdFlag {
+		fmt.Printf("Mean: %.2f\nMedian: %.2f\nMode: %d\nSD: %.2f\n", mean, median, mode, sd)
+	} else {
+		if *meanFlag {
+			fmt.Printf("Mean: %.2f\n", mean)
+		}
+		if *medianFlag {
+			fmt.Printf("Median: %.2f\n", median)
+		}
+		if *modeFlag {
+			fmt.Printf("Mode: %d\n", mode)
+		}
+		if *sdFlag {
+			fmt.Printf("SD: %.2f\n", sd)
+		}
+	}
 }
