@@ -17,7 +17,8 @@ func extentions(new, old string) (string, string) {
 	return newEx[1], oldEx[1]
 }
 
-func compareCakesNames(newCakes, oldCakes []Cake) {
+func compareCakesNames(newCakes, oldCakes []Cake) []string{
+	commonNames := make([]string, 0)
 	newNames := make(map[string]int)
 	oldNames := make(map[string]int)
 	for _, cake := range newCakes {
@@ -26,18 +27,99 @@ func compareCakesNames(newCakes, oldCakes []Cake) {
 	for _, cake := range oldCakes {
 		oldNames[cake.Name]++
 		if newNames[cake.Name] == 0 {
-			fmt.Println("REMOVED cake", "\"" + cake.Name + "\"")
+			fmt.Printf("REMOVED cake %q\n", cake.Name)
+		} else {
+			commonNames = append(commonNames, cake.Name)
 		}
 	}
 	for name, _ := range newNames {
 		if oldNames[name] == 0 {
-			fmt.Println("ADDED cake", "\"" + name + "\"")
+			fmt.Printf("ADDED cake %q\n", name)
+		}
+	}
+	return commonNames
+}
+
+func findCake(cakes []Cake, name string) Cake {
+	for _, cake := range cakes {
+		if cake.Name == name {
+			return cake
+		}
+	}
+	return cakes[0]
+}
+
+func compareTwoIngredients(cakeName string, oldItem, newItem Ingredient) {
+	name := oldItem.Name
+	if oldItem.Count != newItem.Count {
+		fmt.Printf("CHANGED unit count for ingredient %q for cake  %q - %q instead of %q\n",
+					name, cakeName, newItem.Count, oldItem.Count)
+	}
+	if oldItem.Unit != newItem.Unit {
+		if len(oldItem.Unit) == 0 {
+			fmt.Printf("ADDED unit %q for ingredient %q for cake  %q\n", newItem.Unit, name, cakeName)
+		} else if len(newItem.Unit) == 0 {
+			fmt.Printf("REMOVED unit %q for ingredient %q for cake  %q\n", oldItem.Unit, name, cakeName)
+		} else {
+			fmt.Printf("CHANGED unit for ingredient %q for cake  %q - %q instead of %q\n",
+						name, cakeName, newItem.Unit, oldItem.Unit)
 		}
 	}
 }
 
+func compareIngredientsNames(newCake, oldCake Cake) []string {
+	cakeName := newCake.Name
+	commonIngredients := make([]string, 0)
+	newIngredients := make(map[string]int)
+	oldIngredients := make(map[string]int)
+	for _, item := range newCake.Ingredients {
+		newIngredients[item.Name]++
+	}
+	for _, item := range oldCake.Ingredients {
+		oldIngredients[item.Name]++
+		if newIngredients[item.Name] == 0 {
+			fmt.Printf("REMOVED ingredient %q for cake  %q\n", item.Name, cakeName)
+		} else {
+			commonIngredients = append(commonIngredients, item.Name)
+		}
+	}
+	for name, _ := range newIngredients {
+		if oldIngredients[name] == 0 {
+			fmt.Printf("ADDED ingredient %q for cake  %q\n", name, cakeName)
+		}
+	}
+	return commonIngredients
+}
+
+func findIngredient(items []Ingredient, name string) Ingredient {
+	for _, item := range items {
+		if item.Name == name {
+			return item
+		}
+	}
+	return items[0]
+}
+
+func compareTwoCakes(newCake, oldCake Cake) {
+	cakeName := newCake.Name
+	if newCake.Time != oldCake.Time {
+		fmt.Printf("CHANGED cooking time for cake %q - %q instead of %q\n", cakeName, newCake.Time, oldCake.Time)
+	}
+	commonIngredients := compareIngredientsNames(newCake, oldCake)
+	for _, item := range commonIngredients {
+		oldItem := findIngredient(oldCake.Ingredients, item)
+		newItem := findIngredient(newCake.Ingredients, item)
+		compareTwoIngredients(cakeName, oldItem, newItem)
+	}
+}
+
 func compareTwoDataBases(newCakes, oldCakes []Cake) {
-	compareCakesNames(newCakes, oldCakes)
+	commonNames := compareCakesNames(newCakes, oldCakes)
+	for _, name := range commonNames {
+		oldCake := findCake(oldCakes, name)
+		newCake := findCake(newCakes, name)
+		compareTwoCakes(newCake, oldCake)
+	}
 }
 
 func main() {
